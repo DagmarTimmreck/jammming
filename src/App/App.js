@@ -42,15 +42,14 @@ class App extends React.Component {
     );
   }
   save() {
-    Spotify.save(this.state.playlistTitle, this.state.playlist);
-    // .then(
-    //   () => {
-    //     this.setState({
-    //       playlistTitle: 'Enter Title',
-    //       playlist: [],
-    //     });
-    // },
-    // );
+    Spotify.save(this.state.playlistTitle, this.state.playlist).then(
+      () => {
+        this.setState({
+          playlistTitle: 'Enter Title',
+          playlist: [],
+        });
+      },
+    );
   }
   addTrack(track) {
     const notInPlaylist = this.state.playlist.every(playlistTrack =>

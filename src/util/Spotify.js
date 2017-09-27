@@ -127,10 +127,8 @@ const Spotify = {
     const uriList = tracks.map(
       track => track.uri,
     );
-    Spotify.getUserId().then(
-      () => {
-        Spotify.createPlaylist(title, uriList);
-      },
+    return Spotify.getUserId().then(
+      () => Spotify.createPlaylist(title, uriList),
     );
   },
 };
