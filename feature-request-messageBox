@@ -1,0 +1,27 @@
+Feature Request: Message Box
+September 25th 2017
+
+OBJECTIVE
+To provide a means to display messages to the user.
+
+BACKGROUND
+Currently there is no way to give feedback to the user whether an action she triggered was completed sucessfully or not.
+For a good user experience it is key that the user knows the outcome of her actions.
+
+This feature accomplishes the following:
+- displays a message to the user
+
+TECHNICAL DESIGN
+A new component, MessageBox, should be created.
+The current message displayed to the user is kept in App state.
+Should look like this: (Screenshot: Success/Failure) / above the SearchBar
+Hidden when there is no message.
+
+To put this Component to use functions that trigger actions on spotify
+have to be updated to wait for a message to be displayed and update state accordingly.
+
+Methods of Spotify.js have to return messages.
+Work on Error handling in Spotify.js
+
+CAVEATS
+This section is used to lay out alternative solutions and their respective drawbacks, as well as potential drawbacks to the proposed solution above. This is used to make it clear why the technical implementation detailed previously was chosen instead of alternatives. It additionally allows stakeholders or other developers to consider those drawbacks and choose one of the alternate solutions if they prefer it. This may occur if they feel the benefits or drawbacks of that solution are more desirable than the current solution, or if they can identify other benefits and drawbacks not currently listed.

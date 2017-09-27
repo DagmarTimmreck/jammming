@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import SearchBar from '../components/SearchBar/SearchBar';
+import MessageBox from '../components/MessageBox/MessageBox';
 import SearchResults from '../components/SearchResults/SearchResults';
 import Playlist from '../components/Playlist/Playlist';
 import Spotify from '../util/Spotify';
@@ -13,6 +14,7 @@ class App extends React.Component {
       searchResults: [],
       playlistTitle: 'Enter title',
       playlist: [],
+      message: '',
     };
     this.setSearchTerm = this.setSearchTerm.bind(this);
     this.search = this.search.bind(this);
@@ -42,15 +44,15 @@ class App extends React.Component {
     );
   }
   save() {
-    Spotify.save(this.state.playlistTitle, this.state.playlist);
-    // .then(
-    //   () => {
-    //     this.setState({
-    //       playlistTitle: 'Enter Title',
-    //       playlist: [],
-    //     });
-    // },
-    // );
+    Spotify.save(this.state.playlistTitle, this.state.playlist).then(
+      () => {
+        this.setState({
+          playlistTitle: 'Enter Title',
+          playlist: [],
+          message: 'save successful',
+        });
+      },
+    );
   }
   addTrack(track) {
     const notInPlaylist = this.state.playlist.every(playlistTrack =>
@@ -76,6 +78,7 @@ class App extends React.Component {
           onTermChange={this.setSearchTerm}
           onSearch={this.search}
         />
+        <MessageBox message={this.state.message} />
         <div className="App-playlist">
           <SearchResults
             tracks={this.state.searchResults}
