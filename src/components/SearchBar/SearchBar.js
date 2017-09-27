@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './SearchBar.css';
-
+ 
 class SearchBar extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +13,7 @@ class SearchBar extends React.Component {
   render() {
     return (
       <div className="SearchBar">
-        <input value={this.props.term} onChange={this.handleTermChange} />
+        <input value={this.props.term} onChange={this.handleTermChange} onFocus={this.props.onFocus} onBlur={this.props.onBlur} />
         <button onClick={this.props.onSearch}>SEARCH</button>
       </div>
     );
