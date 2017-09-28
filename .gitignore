@@ -19,3 +19,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# IDEA/Webstorm project files
+.idea
+*.iml
+.editorconfig

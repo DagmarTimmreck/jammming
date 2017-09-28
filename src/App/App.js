@@ -3,6 +3,7 @@ import './App.css';
 import SearchBar from '../components/SearchBar/SearchBar';
 import SearchResults from '../components/SearchResults/SearchResults';
 import Playlist from '../components/Playlist/Playlist';
+import Playlists from '../components/Playlist/Playlists';
 import Spotify from '../util/Spotify';
 
 class App extends React.Component {
@@ -13,6 +14,8 @@ class App extends React.Component {
       searchResults: [],
       playlistTitle: 'Enter title',
       playlist: [],
+      userplaylistId: undefined,
+      userPlaylists: [],
     };
     this.setSearchTerm = this.setSearchTerm.bind(this);
     this.search = this.search.bind(this);
@@ -21,6 +24,18 @@ class App extends React.Component {
     this.removeTrack = this.removeTrack.bind(this);
     this.save = this.save.bind(this);
   }
+
+  componentDidMount() {
+    Spotify.getUserPlaylists().then(
+      (playlists) => {
+        console.log(`number of users playlists: ${playlists.length}`);
+        this.setState({
+          userPlaylists: playlists
+        });
+      },
+    );
+  }
+
   setSearchTerm(term) {
     this.setState({
       searchTerm: term,
@@ -87,6 +102,10 @@ class App extends React.Component {
             onRemoveTrack={this.removeTrack}
             onTitleChange={this.setPlaylistTitle}
             onSave={this.save}
+          />
+          <Playlists
+            title="My stored Playlists"
+            playlists={this.state.userPlaylists}
           />
         </div>
       </div>

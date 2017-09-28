@@ -31,6 +31,7 @@ const Spotify = {
         resolve => resolve(userId),
       );
     }
+    Spotify.getAccessToken();
     const getUserNameUrl = `${apiBaseUrl}/me`;
     return fetch(getUserNameUrl, {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -52,6 +53,40 @@ const Spotify = {
         return '';
       },
     );
+  },
+
+  getUserPlaylists() {
+    Spotify.getAccessToken();
+    // TODO WE read all playlists (for loop), not only the first 50 (limitation of the API)
+    return Spotify.getUserId().then(() => {
+      const getPlaylistsUrl = `${apiBaseUrl}/users/${userId}/playlists?limit=50`;
+      return fetch(getPlaylistsUrl, {
+        headers: {Authorization: `Bearer ${accessToken}`},
+      }).then(
+        (response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          console.log('Request failed: playlists not obtained');
+          return '';
+        },
+      ).then(
+        (jsonResponse) => {
+          if (jsonResponse.items) {
+            return jsonResponse.items.map(playlist =>
+              ({
+                id: playlist.id,
+                title: playlist.name,
+                numberOfTracks: playlist.tracks.total
+              })
+            );
+          }
+          else {
+            return [];
+          }
+        }
+      );
+    });
   },
 
   search(term) {
