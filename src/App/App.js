@@ -60,12 +60,14 @@ class App extends React.Component {
     );
   }
   save() {
-    Spotify.save(this.state.playlistTitle, this.state.playlist).then(
+    const playlistTitle = this.state.playlistTitle;
+    const playlist = this.state.playlist;
+    Spotify.save(playlistTitle, playlist).then(
       () => {
+        this.setMessage(`successfully saved ${playlist.length} songs to playlist ${playlistTitle}`);
         this.setState({
           playlistTitle: this.defaults.playlistTitle,
           playlist: [],
-          message: 'save successful',
         });
       },
     ).catch(
