@@ -9,10 +9,14 @@ import Spotify from '../util/Spotify';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
+    this.defaults = {
       searchTerm: 'Search for a song, album or artist',
-      searchResults: [],
       playlistTitle: 'Enter title',
+    };
+    this.state = {
+      searchTerm: this.defaults.searchTerm,
+      searchResults: [],
+      playlistTitle: this.defaults.playlistTitle,
       playlist: [],
       message: '',
     };
@@ -22,6 +26,11 @@ class App extends React.Component {
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
     this.save = this.save.bind(this);
+  }
+  setMessage(newMessage) {
+    this.setState({
+      message: newMessage,
+    });
   }
   setSearchTerm(term) {
     this.setState({
@@ -37,9 +46,16 @@ class App extends React.Component {
     Spotify.search(this.state.searchTerm).then(
       (result) => {
         this.setState({
-          searchTerm: 'Search for a song, album or artist',
+          searchTerm: this.defaults.searchTerm,
           searchResults: result,
         });
+        if (result.length === 0) {
+          this.setMessage('No matching tracks found.');
+        }
+      },
+    ).catch(
+      (error) => {
+        this.setMessage(`${error}`);
       },
     );
   }
@@ -47,10 +63,14 @@ class App extends React.Component {
     Spotify.save(this.state.playlistTitle, this.state.playlist).then(
       () => {
         this.setState({
-          playlistTitle: 'Enter Title',
+          playlistTitle: this.defaults.playlistTitle,
           playlist: [],
           message: 'save successful',
         });
+      },
+    ).catch(
+      (error) => {
+        this.setMessage(`${error}`);
       },
     );
   }
