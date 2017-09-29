@@ -3,6 +3,16 @@ import PropTypes from 'prop-types';
 import './PlaylistEntry.css';
 
 class PlaylistEntry extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.props.onLoad(this.props.playlist);
+  }
+
   render() {
     const number = this.props.playlist.numberOfTracks;
     return (
@@ -11,7 +21,7 @@ class PlaylistEntry extends React.Component {
           <h3>{this.props.playlist.title}</h3>
           <p>{number} {number !== 1 ? 'songs' : 'song'}</p>
         </div>
-        <button className="PlaylistEntry-action">Load</button>
+        <button className="PlaylistEntry-action" onClick={this.handleClick}>Edit</button>
       </li>
     );
   }
@@ -23,6 +33,7 @@ PlaylistEntry.propTypes = {
     title: PropTypes.string.isRequired,
     numberOfTracks: PropTypes.number.isRequired,
   }).isRequired,
+  onLoad: PropTypes.func.isRequired
 };
 
 export default PlaylistEntry;

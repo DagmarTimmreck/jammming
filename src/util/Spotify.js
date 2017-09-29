@@ -121,6 +121,40 @@ const Spotify = {
     );
   },
 
+  loadTracks(playlistId) {
+    console.log(`load tracks of playlist with id ${playlistId}`);
+    Spotify.getAccessToken();
+    return Spotify.getUserId().then(() => {
+      const getPlaylistTracksUrl = `${apiBaseUrl}/users/${userId}/playlists/${playlistId}/tracks`;
+      return fetch(getPlaylistTracksUrl, {
+        headers: {Authorization: `Bearer ${accessToken}`},
+      }).then(
+        (response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          console.log('Request failed: tracks from playlist not obtained');
+          return '';
+        },
+      ).then(
+        (jsonResponse) => {
+          if (jsonResponse.items) {
+            return jsonResponse.items.map(item => ({
+              id: item.track.id,
+              title: item.track.name,
+              album: item.track.album.name,
+              artist: item.track.artists[0].name,
+              uri: item.track.uri,
+              }),
+            );
+          }
+          console.log('no tracks in that playlist.');
+          return [];
+        },
+      );
+    });
+  },
+
   createPlaylist(title, uriList) {
     const createPlaylistUrl = `${apiBaseUrl}/users/${userId}/playlists`;
     return fetch(createPlaylistUrl, {

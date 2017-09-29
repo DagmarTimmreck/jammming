@@ -14,7 +14,6 @@ class App extends React.Component {
       searchResults: [],
       playlistTitle: 'Enter title',
       playlist: [],
-      userplaylistId: undefined,
       userPlaylists: [],
     };
     this.setSearchTerm = this.setSearchTerm.bind(this);
@@ -23,6 +22,7 @@ class App extends React.Component {
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
     this.save = this.save.bind(this);
+    this.loadPlaylist = this.loadPlaylist.bind(this);
   }
 
   componentDidMount() {
@@ -57,6 +57,7 @@ class App extends React.Component {
     );
   }
   save() {
+    // TODO WE: also update the users playlists
     Spotify.save(this.state.playlistTitle, this.state.playlist);
     // .then(
     //   () => {
@@ -76,6 +77,19 @@ class App extends React.Component {
       });
     }
   }
+
+  addTracks(tracks) {
+    const currentTrackIds = this.state.playlist.map(track => track.id);
+    const newTracks = tracks.filter(track => !currentTrackIds.includes(track.id));
+    if (newTracks) {
+      // TODO WE: message instead of console.log
+      this.setState({
+        playlist: this.state.playlist.concat(newTracks),
+      });
+      console.log(`updated ${newTracks.length} songs in new playlist`);
+    }
+  }
+
   removeTrack(track) {
     this.setState({
       playlist: this.state.playlist.filter(playlistTrack =>
@@ -83,6 +97,22 @@ class App extends React.Component {
       ),
     });
   }
+
+  loadPlaylist(playlist) {
+    console.log(`should load playlist '${playlist.title}'`);
+    Spotify.loadTracks(playlist.id).then(
+      (tracks) => {
+        console.log(`loaded ${tracks.length} songs from the playlist.`);
+        // no default title => don't overwrite
+        if (this.state.playlistTitle === 'Enter title') {
+          this.setPlaylistTitle(`Copy of ${playlist.title}`);
+        }
+        // update the list of tracks
+        this.addTracks(tracks);
+      },
+    );
+  }
+
   render() {
     return (
       <div className="App">
@@ -106,6 +136,7 @@ class App extends React.Component {
           <Playlists
             title="My stored Playlists"
             playlists={this.state.userPlaylists}
+            onLoadPlaylist={this.loadPlaylist}
           />
         </div>
       </div>

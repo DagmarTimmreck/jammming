@@ -10,7 +10,7 @@ class Playlists extends React.Component {
         <h2>My stored Playlists</h2>
         <ul className="Playlists">
           {this.props.playlists.map(playlist =>
-            <PlaylistEntry key={playlist.id} playlist={playlist} />
+            <PlaylistEntry key={playlist.id} playlist={playlist} onLoad={this.props.onLoadPlaylist} />
           )}
         </ul>
       </div>
@@ -18,7 +18,8 @@ class Playlists extends React.Component {
   }
 }
 Playlists.propTypes = {
-  playlists: PropTypes.arrayOf(PlaylistEntry.propTypes.playlist).isRequired
+  playlists: PropTypes.arrayOf(PlaylistEntry.propTypes.playlist).isRequired,
+  onLoadPlaylist: PropTypes.func.isRequired,
 };
 
 export default Playlists;
