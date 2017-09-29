@@ -84,8 +84,6 @@ class App extends React.Component {
           term={this.state.searchTerm}
           onTermChange={this.setSearchTerm}
           onSearch={this.search}
-		  onFocus={this.clearOnFocus}
-		  onBlur={this.textOnBlur}
 		  onClear={this.onClearSearch}
         />
         <div className="App-playlist">
