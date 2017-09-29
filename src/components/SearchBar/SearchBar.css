@@ -1,9 +1,10 @@
 .SearchBar {
-  display: flex;
-  flex-direction: column;
+  /*display: flex;
+  flex-direction: column;*/
   align-items: center;
   padding-top: 6.94rem;
   margin-bottom: 6.33rem;
+  text-align: center;
 }
 
 .SearchBar input {
@@ -11,14 +12,16 @@
   padding: .88rem 0;
   border: 1px solid #fff;
   border-radius: 3px;
-  margin-bottom: 2.22rem;
   color: #010c3f;
   text-align: center;
   font-size: 1rem;
+  margin: 0 auto 2.22em auto;
+  display: block;
 }
 
 .SearchBar input:focus {
   outline: none;
+
 }
 
 .SearchBar button {
@@ -31,6 +34,12 @@
   text-align: center;
   font-size: .833rem;
   transition: background-color .25s;
+  display: inline
+}
+
+.SearchBar button.btnclear{
+	margin: 0 0 0 15px;
+	background-color: gray;
 }
 
 .SearchBar button:hover {

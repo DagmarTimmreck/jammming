@@ -20,8 +20,7 @@ class App extends React.Component {
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
     this.save = this.save.bind(this);
-	this.clearOnFocus = this.clearOnFocus.bind(this);
-	this.textOnBlur = this.textOnBlur.bind(this);
+	this.onClearSearch = this.onClearSearch.bind(this);
   }
   
   setSearchTerm(term) {
@@ -71,13 +70,12 @@ class App extends React.Component {
     });
   }
   
-  clearOnFocus(){
+  onClearSearch(){
 	document.getElementsByTagName('input')[0].value = '';
+	 
   }
   
-  textOnBlur(){
-	document.getElementsByTagName('input')[0].value = this.state.searchTerm;
-  }
+ 
   
   render() {
     return (
@@ -88,7 +86,7 @@ class App extends React.Component {
           onSearch={this.search}
 		  onFocus={this.clearOnFocus}
 		  onBlur={this.textOnBlur}
-		  
+		  onClear={this.onClearSearch}
         />
         <div className="App-playlist">
           <SearchResults
