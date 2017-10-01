@@ -196,12 +196,25 @@ const Spotify = {
     const uriList = tracks.map(
       track => track.uri,
     );
-    Spotify.getUserId().then(
+    return Spotify.getUserId().then(
       () => {
         Spotify.createPlaylist(title, uriList);
       },
     );
   },
+
+  remove(playlistId) {
+    console.log(`remove playlist with id ${playlistId}`);
+    Spotify.getAccessToken();
+    return Spotify.getUserId().then(() => {
+      const removePlaylistUrl = `${apiBaseUrl}/users/${userId}/playlists/${playlistId}/followers`;
+      return fetch(removePlaylistUrl, {
+        method: 'DELETE',
+        headers: {Authorization: `Bearer ${accessToken}`},
+      }); // no response expected
+    });
+  },
+
 };
 
 

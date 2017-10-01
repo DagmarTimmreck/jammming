@@ -3,7 +3,7 @@ import './App.css';
 import SearchBar from '../components/SearchBar/SearchBar';
 import SearchResults from '../components/SearchResults/SearchResults';
 import Playlist from '../components/Playlist/Playlist';
-import Playlists from '../components/Playlist/Playlists';
+import Playlists from '../components/Playlists/Playlists';
 import Spotify from '../util/Spotify';
 
 class App extends React.Component {
@@ -18,22 +18,17 @@ class App extends React.Component {
     };
     this.setSearchTerm = this.setSearchTerm.bind(this);
     this.search = this.search.bind(this);
+    this.loadUserPlaylists = this.loadUserPlaylists.bind(this);
     this.setPlaylistTitle = this.setPlaylistTitle.bind(this);
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
     this.save = this.save.bind(this);
     this.loadPlaylist = this.loadPlaylist.bind(this);
+    this.removePlaylist = this.removePlaylist.bind(this);
   }
 
   componentDidMount() {
-    Spotify.getUserPlaylists().then(
-      (playlists) => {
-        console.log(`number of users playlists: ${playlists.length}`);
-        this.setState({
-          userPlaylists: playlists
-        });
-      },
-    );
+    this.loadUserPlaylists();
   }
 
   setSearchTerm(term) {
@@ -46,6 +41,18 @@ class App extends React.Component {
       playlistTitle: title,
     });
   }
+
+  loadUserPlaylists() {
+    Spotify.getUserPlaylists().then(
+      (playlists) => {
+        console.log(`number of users playlists: ${playlists.length}`);
+        this.setState({
+          userPlaylists: playlists
+        });
+      },
+    );
+  }
+
   search() {
     Spotify.search(this.state.searchTerm).then(
       (result) => {
@@ -57,17 +64,17 @@ class App extends React.Component {
     );
   }
   save() {
-    // TODO WE: also update the users playlists
-    Spotify.save(this.state.playlistTitle, this.state.playlist);
-    // .then(
-    //   () => {
-    //     this.setState({
-    //       playlistTitle: 'Enter Title',
-    //       playlist: [],
-    //     });
-    // },
-    // );
+    Spotify.save(this.state.playlistTitle, this.state.playlist).then(
+      () => {
+        this.setState({
+          playlistTitle: 'Enter Title',
+          playlist: [],
+        });
+        this.loadUserPlaylists();
+      },
+    );
   }
+
   addTrack(track) {
     const notInPlaylist = this.state.playlist.every(playlistTrack =>
       playlistTrack.id !== track.id);
@@ -113,6 +120,12 @@ class App extends React.Component {
     );
   }
 
+  removePlaylist(playlist) {
+    console.log(`should remove playlist '${playlist.title}'`);
+    Spotify.remove(playlist.id).then(
+      () => this.loadUserPlaylists());
+  }
+
   render() {
     return (
       <div className="App">
@@ -137,6 +150,7 @@ class App extends React.Component {
             title="My stored Playlists"
             playlists={this.state.userPlaylists}
             onLoadPlaylist={this.loadPlaylist}
+            onRemovePlaylist={this.removePlaylist}
           />
         </div>
       </div>

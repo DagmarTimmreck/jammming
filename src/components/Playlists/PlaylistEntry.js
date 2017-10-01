@@ -6,11 +6,16 @@ class PlaylistEntry extends React.Component {
 
   constructor(props) {
     super(props);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleClickLoad = this.handleClickLoad.bind(this);
+    this.handleClickRemove = this.handleClickRemove.bind(this);
   }
 
-  handleClick() {
+  handleClickLoad() {
     this.props.onLoad(this.props.playlist);
+  }
+
+  handleClickRemove() {
+    this.props.onRemove(this.props.playlist);
   }
 
   render() {
@@ -21,7 +26,8 @@ class PlaylistEntry extends React.Component {
           <h3>{this.props.playlist.title}</h3>
           <p>{number} {number !== 1 ? 'songs' : 'song'}</p>
         </div>
-        <button className="PlaylistEntry-action" onClick={this.handleClick}>Edit</button>
+        <button className="PlaylistEntry-action" onClick={this.handleClickRemove}>Remove</button>
+        <button className="PlaylistEntry-action" onClick={this.handleClickLoad}>Load</button>
       </li>
     );
   }
@@ -33,7 +39,8 @@ PlaylistEntry.propTypes = {
     title: PropTypes.string.isRequired,
     numberOfTracks: PropTypes.number.isRequired,
   }).isRequired,
-  onLoad: PropTypes.func.isRequired
+  onLoad: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
 };
 
 export default PlaylistEntry;
