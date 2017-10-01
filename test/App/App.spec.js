@@ -86,9 +86,9 @@ describe('App', () => {
     playlist.prop('onRemoveTrack')(sampleTrack2);
     expect(wrapper.state('playlist')).to.eql([anotherSampleTrack]);
   });
-  it('starts with a default playlist title', () => {
+  it('starts with empty playlist title', () => {
     const wrapper = shallow(<App />);
-    expect(wrapper.state('playlistTitle').length > 0).to.equal(true);
+    expect(wrapper.state('playlistTitle')).to.equal('');
   });
   it('changes the title', () => {
     const wrapper = shallow(<App />);
@@ -107,9 +107,9 @@ describe('App', () => {
     playlist.prop('onTitleChange')('Changed');
     expect(wrapper.state('playlistTitle')).to.equal('Changed');
   });
-  it('starts with a default search term', () => {
+  it('starts with empty search term', () => {
     const wrapper = shallow(<App />);
-    expect(wrapper.state('searchTerm').length > 0).to.equal(true);
+    expect(wrapper.state('searchTerm')).to.equal('');
   });
   it('changes the term', () => {
     const wrapper = shallow(<App />);

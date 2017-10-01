@@ -9,14 +9,10 @@ import Spotify from '../util/Spotify';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.defaults = {
-      searchTerm: 'Search for a song, album or artist',
-      playlistTitle: 'Enter title',
-    };
     this.state = {
-      searchTerm: this.defaults.searchTerm,
+      searchTerm: '',
       searchResults: [],
-      playlistTitle: this.defaults.playlistTitle,
+      playlistTitle: '',
       playlist: [],
       message: '',
     };
@@ -26,6 +22,11 @@ class App extends React.Component {
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
     this.save = this.save.bind(this);
+    this.onClearSearch = this.onClearSearch.bind(this);
+  }
+
+  onClearSearch() {
+    this.setSearchTerm('');
   }
   setMessage(newMessage) {
     this.setState({
@@ -46,7 +47,7 @@ class App extends React.Component {
     Spotify.search(this.state.searchTerm).then(
       (result) => {
         this.setState({
-          searchTerm: this.defaults.searchTerm,
+          searchTerm: '',
           searchResults: result,
         });
         if (result.length === 0) {
@@ -66,7 +67,7 @@ class App extends React.Component {
       () => {
         this.setMessage(`successfully saved ${playlist.length} songs to playlist ${playlistTitle}`);
         this.setState({
-          playlistTitle: this.defaults.playlistTitle,
+          playlistTitle: '',
           playlist: [],
         });
       },
@@ -92,6 +93,7 @@ class App extends React.Component {
       ),
     });
   }
+
   render() {
     return (
       <div className="App">
@@ -99,6 +101,7 @@ class App extends React.Component {
           term={this.state.searchTerm}
           onTermChange={this.setSearchTerm}
           onSearch={this.search}
+          onClear={this.onClearSearch}
         />
         <MessageBox message={this.state.message} />
         <div className="App-playlist">

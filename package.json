@@ -18,6 +18,8 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "babel-preset-latest": "6.16.0",
+    "babel-preset-react": "6.16.0",
     "chai": "^4.1.2",
     "enzyme": "^2.9.1",
     "eslint-config-airbnb": "^15.1.0",
@@ -26,6 +28,7 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.3.0",
     "ignore-styles": "^5.0.1",
+	"react-test-renderer": "15.5.4",
     "sinon": "^3.2.1"
   }
 }
