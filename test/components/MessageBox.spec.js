@@ -6,5 +6,5 @@ import MessageBox from '../../src/components/MessageBox/MessageBox';
 it('should render props.message', () => {
   const message = 'TestMessage';
   const wrapper = shallow(<MessageBox message={message} />);
-  expect(wrapper.find('input').html().includes(message)).to.equal(true);
+  expect(wrapper.html().includes(message)).to.equal(true);
 });
