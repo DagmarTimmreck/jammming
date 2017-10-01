@@ -31,7 +31,7 @@ describe('SearchBar', () => {
   it('should call onSearch when button is clicked', () => {
     const searchSpy = spy();
     const wrapper = shallow(<SearchBar onSearch={searchSpy} />);
-    const button = wrapper.find('button');
+    const button = wrapper.find('.searchButton');
 
     button.simulate('click');
 
