@@ -37,7 +37,7 @@
   display: inline
 }
 
-.SearchBar button.btnclear{
+.SearchBar .btnclear {
 	margin: 0 0 0 15px;
 	background-color: gray;
 }
