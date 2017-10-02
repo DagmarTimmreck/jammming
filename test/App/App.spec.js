@@ -5,31 +5,34 @@ import App from '../../src/App/App';
 import SearchBar from '../../src/components/SearchBar/SearchBar';
 import SearchResults from '../../src/components/SearchResults/SearchResults';
 import Playlist from '../../src/components/Playlist/Playlist';
+import MessageBox from '../../src/components/MessageBox/MessageBox';
 
-const sampleTrack = {
+const sampleTrack1 = {
   id: '123',
   title: 'Tiny Dancer',
   artist: 'Elton John',
   album: 'Madman Across The Water',
 };
-const anotherSampleTrack1 = {
+const sampleTrack2 = {
+  id: '123',
+  title: 'Tiny Dancer',
+  artist: 'Elton John',
+  album: 'Madman Across The Water',
+};
+const anotherSampleTrack = {
   id: 'abc',
   title: 'Fields of Gold',
   artist: 'Sting',
   album: 'Ten Summoner&apos;s Tales',
 };
-const anotherSampleTrack2 = {
-  id: 'abc',
-  title: 'Fields of Gold',
-  artist: 'Sting',
-  album: 'Ten Summoner&apos;s Tales',
-};
+
 describe('App', () => {
-  it('should render SearchBar, SearchResults and Playlist', () => {
+  it('should render SearchBar, SearchResults, MessageBox and Playlist', () => {
     const wrapper = shallow(<App />);
     expect(wrapper.containsMatchingElement(<SearchBar />), 'SearchBar').to.equal(true);
-    expect(wrapper.containsMatchingElement(<SearchResults />)).to.equal(true);
-    expect(wrapper.containsMatchingElement(<Playlist />)).to.equal(true);
+    expect(wrapper.containsMatchingElement(<SearchResults />), 'SearchResults').to.equal(true);
+    expect(wrapper.containsMatchingElement(<Playlist />), 'Playlist').to.equal(true);
+    expect(wrapper.containsMatchingElement(<MessageBox />), 'MessageBox').to.equal(true);
   });
   it('should start with an empty playlist', () => {
     const wrapper = shallow(<App />);
@@ -41,14 +44,14 @@ describe('App', () => {
   });
   it('adds tracks to the playlist', () => {
     const wrapper = shallow(<App />);
-    wrapper.instance().addTrack(sampleTrack);
-    expect(wrapper.state('playlist')).to.eql([sampleTrack]);
+    wrapper.instance().addTrack(sampleTrack1);
+    expect(wrapper.state('playlist')).to.eql([sampleTrack1]);
   });
   it('does not add a track to the playlist if it is already there', () => {
     const wrapper = shallow(<App />);
-    wrapper.instance().addTrack(sampleTrack);
-    wrapper.instance().addTrack(sampleTrack);
-    expect(wrapper.state('playlist')).to.eql([sampleTrack]);
+    wrapper.instance().addTrack(sampleTrack1);
+    wrapper.instance().addTrack(sampleTrack2);
+    expect(wrapper.state('playlist')).to.eql([sampleTrack1]);
   });
   it('passes addTrack to SearchResults', () => {
     const wrapper = shallow(<App />);
@@ -59,15 +62,15 @@ describe('App', () => {
   it('passes a bound addTrack function to SearchResults', () => {
     const wrapper = shallow(<App />);
     const searchResults = wrapper.find(SearchResults);
-    searchResults.prop('onAddTrack')(sampleTrack);
-    expect(wrapper.state('playlist')).to.eql([sampleTrack]);
+    searchResults.prop('onAddTrack')(sampleTrack1);
+    expect(wrapper.state('playlist')).to.eql([sampleTrack1]);
   });
   it('removes tracks from the playlist', () => {
     const wrapper = shallow(<App />);
-    wrapper.instance().addTrack(sampleTrack);
-    wrapper.instance().addTrack(anotherSampleTrack1);
-    wrapper.instance().removeTrack(anotherSampleTrack2);
-    expect(wrapper.state('playlist')).to.eql([sampleTrack]);
+    wrapper.instance().addTrack(sampleTrack1);
+    wrapper.instance().addTrack(anotherSampleTrack);
+    wrapper.instance().removeTrack(sampleTrack2);
+    expect(wrapper.state('playlist')).to.eql([anotherSampleTrack]);
   });
   it('passes removeTrack to Playlist', () => {
     const wrapper = shallow(<App />);
@@ -78,14 +81,14 @@ describe('App', () => {
   it('passes a bound removeTrack function to Playlist', () => {
     const wrapper = shallow(<App />);
     const playlist = wrapper.find(Playlist);
-    wrapper.instance().addTrack(sampleTrack);
-    wrapper.instance().addTrack(anotherSampleTrack1);
-    playlist.prop('onRemoveTrack')(anotherSampleTrack2);
-    expect(wrapper.state('playlist')).to.eql([sampleTrack]);
+    wrapper.instance().addTrack(sampleTrack1);
+    wrapper.instance().addTrack(anotherSampleTrack);
+    playlist.prop('onRemoveTrack')(sampleTrack2);
+    expect(wrapper.state('playlist')).to.eql([anotherSampleTrack]);
   });
-  it('starts with a default playlist title', () => {
+  it('starts with empty playlist title', () => {
     const wrapper = shallow(<App />);
-    expect(wrapper.state('playlistTitle').length > 0).to.equal(true);
+    expect(wrapper.state('playlistTitle')).to.equal('');
   });
   it('changes the title', () => {
     const wrapper = shallow(<App />);
@@ -98,15 +101,15 @@ describe('App', () => {
     const changeTitle = wrapper.instance().setPlaylistTitle;
     expect(playlist.prop('onTitleChange')).to.eql(changeTitle);
   });
-  it('passes a bound changePlaylitTitle function to Playlist', () => {
+  it('passes a bound setPlaylitTitle function to Playlist', () => {
     const wrapper = shallow(<App />);
     const playlist = wrapper.find(Playlist);
     playlist.prop('onTitleChange')('Changed');
     expect(wrapper.state('playlistTitle')).to.equal('Changed');
   });
-  it('starts with a default search term', () => {
+  it('starts with empty search term', () => {
     const wrapper = shallow(<App />);
-    expect(wrapper.state('searchTerm').length > 0).to.equal(true);
+    expect(wrapper.state('searchTerm')).to.equal('');
   });
   it('changes the term', () => {
     const wrapper = shallow(<App />);

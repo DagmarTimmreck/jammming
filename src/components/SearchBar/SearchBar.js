@@ -13,8 +13,15 @@ class SearchBar extends React.Component {
   render() {
     return (
       <div className="SearchBar">
-        <input value={this.props.term} onChange={this.handleTermChange} />
-        <button onClick={this.props.onSearch}>SEARCH</button>
+        <input
+          onChange={this.handleTermChange}
+          value={this.props.term}
+          placeholder="Search for album, artist or song"
+        />
+        <div>
+          <button onClick={this.props.onSearch} className="searchButton">SEARCH</button>
+          <button onClick={this.props.onClear} className="btnclear">Clear</button>
+        </div>
       </div>
     );
   }
@@ -23,6 +30,7 @@ SearchBar.propTypes = {
   term: PropTypes.string.isRequired,
   onTermChange: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
+  onClear: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

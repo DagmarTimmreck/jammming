@@ -11,6 +11,7 @@ const Spotify = {
     if (expirationTime && Date.now() > expirationTime) {
       expirationTime = undefined;
       accessToken = undefined;
+      userId = undefined;
       window.location.hash = '';
     }
     if (!accessToken) {
@@ -23,6 +24,22 @@ const Spotify = {
         window.location.href = `${authorizationUrl}?client_id=${clientId}&scope=playlist-modify-public&redirect_uri=${uri}&response_type=token`;
       }
     }
+    return accessToken;
+  },
+
+  buildAuthorizationHeader() {
+    const authorizationHeader = {
+      Authorization: `Bearer ${this.getAccessToken()}`,
+    };
+    return authorizationHeader;
+  },
+
+  handleResponse(response) {
+    if (response.ok) {
+      return response.json();
+    }
+
+    throw new Error(`Spotify says '${response.statusText}'`);
   },
 
   getUserId() {
@@ -31,26 +48,17 @@ const Spotify = {
         resolve => resolve(userId),
       );
     }
-    Spotify.getAccessToken();
     const getUserNameUrl = `${apiBaseUrl}/me`;
     return fetch(getUserNameUrl, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }).then(
-      (response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        console.log('Request failed: userId not obtained');
-        return '';
-      },
+      headers: this.buildAuthorizationHeader(),
+    }).then(this.handleResponse,
     ).then(
       (jsonResponse) => {
         if (jsonResponse.id) {
           userId = jsonResponse.id;
           return jsonResponse.id;
         }
-        console.log('received bad format');
-        return '';
+        throw new Error('userId: received bad format');
       },
     );
   },
@@ -90,18 +98,10 @@ const Spotify = {
   },
 
   search(term) {
-    Spotify.getAccessToken();
     const fetchUrl = `${apiBaseUrl}/search?type=track&q=${term}`;
     return fetch(fetchUrl, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }).then(
-      (response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        console.log('Request failed!');
-        return '';
-      },
+      headers: this.buildAuthorizationHeader(),
+    }).then(this.handleResponse,
     ).then(
       (jsonResponse) => {
         if (jsonResponse.tracks) {
@@ -115,12 +115,12 @@ const Spotify = {
             }),
           );
         }
-        console.log('no valid answer');
-        return [];
+        throw new Error('Search results: bad format');
       },
     );
   },
 
+  createPlaylist(title) {
   loadTracks(playlistId) {
     console.log(`load tracks of playlist with id ${playlistId}`);
     Spotify.getAccessToken();
@@ -155,52 +155,45 @@ const Spotify = {
     });
   },
 
-  createPlaylist(title, uriList) {
+  createPlaylist(title) {
     const createPlaylistUrl = `${apiBaseUrl}/users/${userId}/playlists`;
     return fetch(createPlaylistUrl, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}` },
+      headers: this.buildAuthorizationHeader(),
       body: JSON.stringify({ name: title }),
-    }).then(
-      (response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        console.log('Request failed!');
-        return '';
-      },
+    }).then(this.handleResponse,
     ).then(
       (jsonResponse) => {
         if (jsonResponse.id) {
           return jsonResponse.id;
         }
-        console.log('received bad format');
-        return '';
-      },
-    ).then(
-      (playlistId) => {
-        const populatePlaylistUrl = `${apiBaseUrl}/users/${userId}/playlists/${playlistId}/tracks`;
-        return fetch(populatePlaylistUrl, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}` },
-          body: JSON.stringify({ uris: uriList }),
-        });
+        throw new Error('received no playlistId');
       },
     );
   },
 
+  saveTracksToPlaylist(playlistId, uriList) {
+    const populatePlaylistUrl = `${apiBaseUrl}/users/${userId}/playlists/${playlistId}/tracks`;
+    return fetch(populatePlaylistUrl, {
+      method: 'POST',
+      headers: this.buildAuthorizationHeader(),
+      body: JSON.stringify({ uris: uriList }),
+    }).then(
+      this.handleResponse,
+    );
+  },
+
   save(title, tracks) {
-    Spotify.getAccessToken();
-    const uriList = tracks.map(
-      track => track.uri,
-    );
-    return Spotify.getUserId().then(
-      () => {
-        Spotify.createPlaylist(title, uriList);
-      },
-    );
+    const uriList =
+      tracks.map(
+        track => track.uri,
+      );
+    return Spotify.getUserId()
+      .then(
+        () => Spotify.createPlaylist(title),
+      ).then(
+        playlistId => Spotify.saveTracksToPlaylist(playlistId, uriList),
+      );
   },
 
   remove(playlistId) {
