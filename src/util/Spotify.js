@@ -3,12 +3,14 @@ const authorizationUrl = 'https://accounts.spotify.com/authorize';
 const apiBaseUrl = 'https://api.spotify.com/v1';
 const uri = 'http://localhost:3000';
 let accessToken;
+let requestTime;
 let expirationTime;
 let userId;
 
 const Spotify = {
   getAccessToken() {
     if (expirationTime && Date.now() > expirationTime) {
+      requestTime = undefined;
       expirationTime = undefined;
       accessToken = undefined;
       userId = undefined;
@@ -18,9 +20,9 @@ const Spotify = {
       if (window.location.hash.includes('#access_token')) {
         accessToken = window.location.hash.match(/(#access_token=)(.*?)(&)/)[2];
         const expiresIn = window.location.hash.match(/(expires_in=)(\d*)/)[2];
-        const now = Date.now();
-        expirationTime = now + (expiresIn * 1000);
+        expirationTime = requestTime + (expiresIn * 1000);
       } else {
+        requestTime = Date.now();
         window.location.href = `${authorizationUrl}?client_id=${clientId}&scope=playlist-modify-public&redirect_uri=${uri}&response_type=token`;
       }
     }
@@ -38,7 +40,6 @@ const Spotify = {
     if (response.ok) {
       return response.json();
     }
-
     throw new Error(`Spotify says '${response.statusText}'`);
   },
 
