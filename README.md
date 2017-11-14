@@ -1,5 +1,7 @@
 ***Jammming - CodeCademy Pro Intensive project***
 
+v1.0 is essentially the reviewes version before mergingn collaborative featrues
+
 *Notes to the reviewer:*
 - I built the React part of the project without the given instructions. (Only consulted them to find out where to place state after running into issues with my own approach)
 - I used TDD as descirbed in [Getting Started with TDD in React](https://semaphoreci.com/community/tutorials/getting-started-with-tdd-in-react)
