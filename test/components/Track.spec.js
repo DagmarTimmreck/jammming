@@ -15,6 +15,7 @@ describe('Track', () => {
   it('should render Track-information and Track-action', () => {
     const action = {
       symbol: '',
+      func: () => {},
     };
     const wrapper = shallow(<Track track={sampleTrack} action={action} />);
     expect(wrapper.find('.Track-information').exists()).to.equal(true);
@@ -23,6 +24,7 @@ describe('Track', () => {
   it('should render using the right props', () => {
     const action = {
       symbol: 'x',
+      func: () => {},
     };
     const wrapper = shallow(<Track track={sampleTrack} action={action} />);
     const renderedtrack = wrapper.find('.Track-information').text();

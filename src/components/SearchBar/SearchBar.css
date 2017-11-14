@@ -19,7 +19,6 @@
 
 .SearchBar input:focus {
   outline: none;
-
 }
 
 .SearchBar button {
@@ -35,9 +34,8 @@
   display: inline
 }
 
-.SearchBar .btnclear {
-	margin: 0 0 0 15px;
-	background-color: gray;
+.SearchBar .clearButton {
+  background-color: gray;
 }
 
 .SearchBar button:hover {

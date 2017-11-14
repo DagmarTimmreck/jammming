@@ -20,7 +20,7 @@ class SearchBar extends React.Component {
         />
         <div>
           <button onClick={this.props.onSearch} className="searchButton">SEARCH</button>
-          <button onClick={this.props.onClear} className="btnclear">Clear</button>
+          <button onClick={this.props.onClear} className="clearButton">Clear</button>
         </div>
       </div>
     );

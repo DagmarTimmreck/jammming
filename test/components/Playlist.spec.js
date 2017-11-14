@@ -7,23 +7,21 @@ import TrackList from '../../src/components/TrackList/TrackList';
 
 describe('Playlist', () => {
   it('should render an input, a TrackList and a save button', () => {
-    const wrapper = shallow(<Playlist title="" tracks={[]} />);
-    expect(wrapper.containsAllMatchingElements([
-      <input />,
-      <TrackList />,
-      <button>SAVE TO SPOTIFY</button>,
-    ])).to.equal(true);
+    const wrapper = shallow(<Playlist title="" tracks={[]} onRemoveTrack={() => {}} onTitleChange={() => {}} onSave={() => {}} />);
+    expect(wrapper.find(TrackList), 'TrackList').to.have.length(1);
+    expect(wrapper.find('button'), 'button').to.have.length(1);
+    expect(wrapper.find('input'), 'input').to.have.length(1);
   });
   it('should render the input with props.title', () => {
     const title = 'TestList';
     const wrapper = shallow(
-      <Playlist title={title} tracks={[]} onRemoveTrack={() => {}} onTitleChange={() => {}} />);
+      <Playlist title={title} tracks={[]} onRemoveTrack={() => {}} onTitleChange={() => {}} onSave={() => {}} />);
     expect(wrapper.find('input').html().includes(title)).to.equal(true);
   });
   it('should call onTitleChange when somethig is entered', () => {
     const titleSpy = spy();
     const wrapper = shallow(
-      <Playlist title="" tracks={[]} onRemoveTrack={() => {}} onTitleChange={titleSpy} />);
+      <Playlist title="" tracks={[]} onRemoveTrack={() => {}} onTitleChange={titleSpy} onSave={() => {}} />);
     const input = wrapper.find('input');
 
     input.simulate('change', { target: {} });

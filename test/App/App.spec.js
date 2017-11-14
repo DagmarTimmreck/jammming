@@ -29,10 +29,10 @@ const anotherSampleTrack = {
 describe('App', () => {
   it('should render SearchBar, SearchResults, MessageBox and Playlist', () => {
     const wrapper = shallow(<App />);
-    expect(wrapper.containsMatchingElement(<SearchBar />), 'SearchBar').to.equal(true);
-    expect(wrapper.containsMatchingElement(<SearchResults />), 'SearchResults').to.equal(true);
-    expect(wrapper.containsMatchingElement(<Playlist />), 'Playlist').to.equal(true);
-    expect(wrapper.containsMatchingElement(<MessageBox />), 'MessageBox').to.equal(true);
+    expect(wrapper.find(SearchBar), 'SearchBar').to.have.length(1);
+    expect(wrapper.find(SearchResults), 'SearchResults').to.have.length(1);
+    expect(wrapper.find(Playlist), 'Playlist').to.have.length(1);
+    expect(wrapper.find(MessageBox), 'MessageBox').to.have.length(1);
   });
   it('should start with an empty playlist', () => {
     const wrapper = shallow(<App />);
