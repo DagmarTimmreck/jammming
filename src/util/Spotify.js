@@ -64,6 +64,37 @@ const Spotify = {
     );
   },
 
+  getUserPlaylists() {
+    Spotify.getAccessToken();
+    // TODO WE read all playlists (for loop), not only the first 50 (limitation of the API)
+    return Spotify.getUserId().then(() => {
+      const getPlaylistsUrl = `${apiBaseUrl}/users/${userId}/playlists?limit=50`;
+      return fetch(getPlaylistsUrl, {
+        headers: this.buildAuthorizationHeader(),
+      }).then(
+        (response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('Request failed: playlists not obtained');
+        },
+      ).then(
+        (jsonResponse) => {
+          if (jsonResponse.items) {
+            return jsonResponse.items.map(playlist =>
+              ({
+                id: playlist.id,
+                title: playlist.name,
+                numberOfTracks: playlist.tracks.total,
+              }),
+            );
+          }
+          return [];
+        },
+      );
+    });
+  },
+
   search(term) {
     const fetchUrl = `${apiBaseUrl}/search?type=track&q=${term}`;
     return fetch(fetchUrl, {
@@ -85,6 +116,39 @@ const Spotify = {
         throw new Error('Search results: bad format');
       },
     );
+  },
+
+  loadTracks(playlistId) {
+    console.log(`load tracks of playlist with id ${playlistId}`);
+    Spotify.getAccessToken();
+    return Spotify.getUserId().then(() => {
+      const getPlaylistTracksUrl = `${apiBaseUrl}/users/${userId}/playlists/${playlistId}/tracks`;
+      return fetch(getPlaylistTracksUrl, {
+        headers: {Authorization: `Bearer ${accessToken}`},
+      }).then(
+        (response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('Request failed: tracks from playlist not obtained');
+        },
+      ).then(
+        (jsonResponse) => {
+          if (jsonResponse.items) {
+            return jsonResponse.items.map(item => ({
+              id: item.track.id,
+              title: item.track.name,
+              album: item.track.album.name,
+              artist: item.track.artists[0].name,
+              uri: item.track.uri,
+            }),
+            );
+          }
+          console.log('no tracks in that playlist.');
+          return [];
+        },
+      );
+    });
   },
 
   createPlaylist(title) {
@@ -127,6 +191,19 @@ const Spotify = {
         playlistId => Spotify.saveTracksToPlaylist(playlistId, uriList),
       );
   },
+
+  remove(playlistId) {
+    console.log(`remove playlist with id ${playlistId}`);
+    Spotify.getAccessToken();
+    return Spotify.getUserId().then(() => {
+      const removePlaylistUrl = `${apiBaseUrl}/users/${userId}/playlists/${playlistId}/followers`;
+      return fetch(removePlaylistUrl, {
+        method: 'DELETE',
+        headers: this.buildAuthorizationHeader(),
+      }); // no response expected
+    });
+  },
+
 };
 
 

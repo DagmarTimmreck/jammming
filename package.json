@@ -14,6 +14,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "mocha --require ignore-styles ./test/setup.js --recursive ./test",
+    "coverage": "nyc mocha --require ignore-styles ./test/setup.js --recursive ./test",
     "tdd": "npm test -- --watch",
     "eject": "react-scripts eject"
   },
