@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import SearchBar from '../components/SearchBar/SearchBar';
+import MessageBox from '../components/MessageBox/MessageBox';
 import SearchResults from '../components/SearchResults/SearchResults';
 import Playlist from '../components/Playlist/Playlist';
 import Playlists from '../components/Playlists/Playlists';
@@ -10,11 +11,12 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchTerm: 'Search for a song, album or artist',
+      searchTerm: '',
       searchResults: [],
-      playlistTitle: 'Enter title',
+      playlistTitle: '',
       playlist: [],
       userPlaylists: [],
+      message: '',
     };
     this.setSearchTerm = this.setSearchTerm.bind(this);
     this.search = this.search.bind(this);
@@ -25,10 +27,17 @@ class App extends React.Component {
     this.save = this.save.bind(this);
     this.loadPlaylist = this.loadPlaylist.bind(this);
     this.removePlaylist = this.removePlaylist.bind(this);
+    this.onClearSearch = this.onClearSearch.bind(this);
   }
 
-  componentDidMount() {
-    this.loadUserPlaylists();
+  onClearSearch() {
+    this.setSearchTerm('');
+  }
+
+  setMessage(newMessage) {
+    this.setState({
+      message: newMessage,
+    });
   }
 
   setSearchTerm(term) {
@@ -45,9 +54,9 @@ class App extends React.Component {
   loadUserPlaylists() {
     Spotify.getUserPlaylists().then(
       (playlists) => {
-        console.log(`number of users playlists: ${playlists.length}`);
+        this.setMessage(`number of users playlists: ${playlists.length}`);
         this.setState({
-          userPlaylists: playlists
+          userPlaylists: playlists,
         });
       },
     );
@@ -57,20 +66,35 @@ class App extends React.Component {
     Spotify.search(this.state.searchTerm).then(
       (result) => {
         this.setState({
-          searchTerm: 'Search for a song, album or artist',
+          searchTerm: '',
           searchResults: result,
         });
+        if (result.length === 0) {
+          this.setMessage('No matching tracks found.');
+        }
+      },
+    ).catch(
+      (error) => {
+        this.setMessage(`${error}`);
       },
     );
   }
+
   save() {
-    Spotify.save(this.state.playlistTitle, this.state.playlist).then(
+    const playlistTitle = this.state.playlistTitle;
+    const playlist = this.state.playlist;
+    Spotify.save(playlistTitle, playlist).then(
       () => {
+        this.setMessage(`successfully saved ${playlist.length} songs to playlist ${playlistTitle}`);
         this.setState({
-          playlistTitle: 'Enter Title',
+          playlistTitle: '',
           playlist: [],
         });
         this.loadUserPlaylists();
+      },
+    ).catch(
+      (error) => {
+        this.setMessage(`${error}`);
       },
     );
   }
@@ -89,11 +113,10 @@ class App extends React.Component {
     const currentTrackIds = this.state.playlist.map(track => track.id);
     const newTracks = tracks.filter(track => !currentTrackIds.includes(track.id));
     if (newTracks) {
-      // TODO WE: message instead of console.log
       this.setState({
         playlist: this.state.playlist.concat(newTracks),
       });
-      console.log(`updated ${newTracks.length} songs in new playlist`);
+      this.setMessage(`updated ${newTracks.length} songs in new playlist`);
     }
   }
 
@@ -106,10 +129,10 @@ class App extends React.Component {
   }
 
   loadPlaylist(playlist) {
-    console.log(`should load playlist '${playlist.title}'`);
+    this.setMessage(`should load playlist '${playlist.title}'`);
     Spotify.loadTracks(playlist.id).then(
       (tracks) => {
-        console.log(`loaded ${tracks.length} songs from the playlist.`);
+        this.setMessage(`loaded ${tracks.length} songs from the playlist.`);
         // no default title => don't overwrite
         if (this.state.playlistTitle === 'Enter title') {
           this.setPlaylistTitle(`Copy of ${playlist.title}`);
@@ -121,7 +144,7 @@ class App extends React.Component {
   }
 
   removePlaylist(playlist) {
-    console.log(`should remove playlist '${playlist.title}'`);
+    this.setMessage(`should remove playlist '${playlist.title}'`);
     Spotify.remove(playlist.id).then(
       () => this.loadUserPlaylists());
   }
@@ -133,7 +156,9 @@ class App extends React.Component {
           term={this.state.searchTerm}
           onTermChange={this.setSearchTerm}
           onSearch={this.search}
+          onClear={this.onClearSearch}
         />
+        <MessageBox message={this.state.message} />
         <div className="App-playlist">
           <SearchResults
             tracks={this.state.searchResults}

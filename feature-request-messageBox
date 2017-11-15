@@ -1,0 +1,36 @@
+Feature Request:
+Message Box
+
+September 30th 2017
+
+OBJECTIVE
+To provide a means to display messages to the user.
+BACKGROUND
+Currently there is no way to give feedback to the user whether saving a playlist was completed successfully or not.
+For a good user experience it is key that the user knows the outcome of her actions.
+This feature accomplishes the following:
+- displays a message to the user
+TECHNICAL DESIGN
+A new component, MessageBox, should be created. This component on render will display a message passed in as a prop.
+We will keep the current message displayed to the user in App state.message which is initialized to an empty string.
+To avoid duplicate code we will implement a .setMessage() method.
+Once .setMessage() is written we will use it in App.save() and App.search().
+In App.save() we set a success message if the asynchronous call to Spotify.save() returns without error.
+In App.search() if Spotify.search() returns an empty Array we will set a message 'no tracks found'.
+All methods in Spotify.js() dealing with API requests have to be updated to throw/propagate Errors.
+The methods App.save() and App.search() have to catch any errors from the asynchronous calls and set the message to  error message received.
+Finally, App should render MessageBox.
+This component should look as follows upon implementation:
+
+CAVEATS
+
+Stateless MessageBox
+
+Currently only methods in App.js need to display messages. So we decided that MessageBox
+itself should be stateless. Keeping track of the message displayed happens in App.state
+and it is accessed through the method App.setMessage().
+Because displaying a message to the user is a general feature the need could arise
+to have more than one MessageBox in a view. Then it would be advantageous to have
+the message state and the setMessage method inside the MessageBox component.
+This implementation however would break the overall architecture of central state
+with all the drawbacks local state brings about.
