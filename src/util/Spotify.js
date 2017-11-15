@@ -49,7 +49,6 @@ const Spotify = {
         resolve => resolve(userId),
       );
     }
-    Spotify.getAccessToken();
     const getUserNameUrl = `${apiBaseUrl}/me`;
     return fetch(getUserNameUrl, {
       headers: this.buildAuthorizationHeader(),

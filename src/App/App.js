@@ -25,9 +25,13 @@ class App extends React.Component {
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
     this.save = this.save.bind(this);
+    this.onClearSearch = this.onClearSearch.bind(this);
     this.loadPlaylist = this.loadPlaylist.bind(this);
     this.removePlaylist = this.removePlaylist.bind(this);
-    this.onClearSearch = this.onClearSearch.bind(this);
+  }
+
+  componentDidMount() {
+    this.loadUserPlaylists();
   }
 
   onClearSearch() {
